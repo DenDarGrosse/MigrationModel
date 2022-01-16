@@ -34,9 +34,10 @@ public class MigrationController {
     }
 
     @PutMapping("/run/{id}")
-    public void run(@PathVariable Long id) {
+    public ResponseEntity<String> run(@PathVariable Long id) {
         var migration = migrationService.validate(id);
         migrationService.run(migration);
+        return ResponseEntity.ok("Migration started");
     }
 
     @GetMapping("status/{id}")

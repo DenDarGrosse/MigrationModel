@@ -70,6 +70,7 @@ public class MigrationService {
         migrationRepository.save(migration);
     }
 
+    //TODO: make async
     @SneakyThrows
     public void run(Migration migration) {
         setMigrationState(migration, MigrationState.running);
