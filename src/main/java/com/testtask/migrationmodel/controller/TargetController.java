@@ -4,6 +4,7 @@ import com.testtask.migrationmodel.entity.TargetCloud;
 import com.testtask.migrationmodel.repository.TargetCloudRepository;
 import com.testtask.migrationmodel.service.TargetCloudService;
 import com.testtask.migrationmodel.service.WorkloadService;
+import com.testtask.migrationmodel.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,11 @@ public class TargetController {
     private final TargetCloudRepository targetCloudRepository;
     private final WorkloadService workloadService;
     private final TargetCloudService targetCloudService;
+    private final IdUtil idUtil;
 
     @PostMapping
     public ResponseEntity<TargetCloud> add(@RequestBody TargetCloud targetCloud) {
-        var lastId = targetCloudRepository.getLastId();
-
-        if (lastId == null) {
-            lastId = -1L;
-        }
+        var lastId = idUtil.getNextId(targetCloudRepository);
 
         workloadService.validate(targetCloud.getTargetId());
 

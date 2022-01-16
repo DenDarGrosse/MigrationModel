@@ -3,6 +3,7 @@ package com.testtask.migrationmodel.controller;
 import com.testtask.migrationmodel.entity.Volume;
 import com.testtask.migrationmodel.repository.VolumeRepository;
 import com.testtask.migrationmodel.service.VolumeService;
+import com.testtask.migrationmodel.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class VolumeController {
     private final VolumeRepository volumeRepository;
     private final VolumeService volumeService;
+    private final IdUtil idUtil;
 
     @PostMapping
     public ResponseEntity<Volume> save(@RequestBody Volume volume) {
-        var lastId = volumeRepository.getLastId();
-
-        if (lastId == null) {
-            lastId = -1L;
-        }
+        var lastId = idUtil.getNextId(volumeRepository);
 
         var _volume = new Volume(lastId + 1, volume.getMountPoint(), volume.getSize());
         volumeRepository.save(_volume);

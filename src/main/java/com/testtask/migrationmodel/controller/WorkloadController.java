@@ -5,6 +5,7 @@ import com.testtask.migrationmodel.repository.WorkloadRepository;
 import com.testtask.migrationmodel.service.CredentialsService;
 import com.testtask.migrationmodel.service.VolumeService;
 import com.testtask.migrationmodel.service.WorkloadService;
+import com.testtask.migrationmodel.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,11 @@ public class WorkloadController {
     private final VolumeService volumeService;
     private final CredentialsService credentialsService;
     private final WorkloadService workloadService;
+    private final IdUtil idUtil;
 
     @PostMapping
     public ResponseEntity<Workload> add(@RequestBody Workload workload) {
-        var lastId = workloadRepository.getLastId();
-
-        if (lastId == null) {
-            lastId = -1L;
-        }
+        var lastId = idUtil.getNextId(workloadRepository);
 
         volumeService.validate(workload.getVolumeIds());
         credentialsService.validate(workload.getCredentialsId());
