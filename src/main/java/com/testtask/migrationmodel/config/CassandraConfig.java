@@ -1,23 +1,22 @@
 package com.testtask.migrationmodel.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 
 @Configuration
 public class CassandraConfig extends AbstractCassandraConfiguration {
+    @Value("${cassandra.contactPoints}")
+    private String contactPoints;
+    @Value("${cassandra.keyspaceName}")
+    private String keyspaceName;
 
-    /*
-     * Provide a contact point to the configuration.
-     */
     public String getContactPoints() {
-        return "localhost";
+        return contactPoints;
     }
 
-    /*
-     * Provide a keyspace name to the configuration.
-     */
     public String getKeyspaceName() {
-        return "test";
+        return keyspaceName;
     }
 
     public String[] getEntityBasePackages() {
