@@ -35,7 +35,6 @@ public class WorkloadService {
     }
 
     public Workload modify(Long id, Workload workload){
-        //TODO: need to not let change ip of source
         var _workload = validate(id);
         _workload.setCredentialsId(workload.getCredentialsId());
         _workload.setVolumeIds(workload.getVolumeIds());
