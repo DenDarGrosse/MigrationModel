@@ -9,14 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/volume")
+@RequestMapping("/api/volume")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class VolumeController {
     private final VolumeRepository volumeRepository;
     private final VolumeService volumeService;
 
     @PostMapping
-    public ResponseEntity<Volume> save(@RequestBody Volume volume) {
+    public ResponseEntity<Volume> add(@RequestBody Volume volume) {
         var _volume = volumeService.add(volume);
         return ResponseEntity.ok(_volume);
     }

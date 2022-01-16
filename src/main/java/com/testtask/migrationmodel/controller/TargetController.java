@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/target")
+@RequestMapping("/api/target")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TargetController {
     private final TargetCloudRepository targetCloudRepository;

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/workload")
+@RequestMapping("/api/workload")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WorkloadController {
     private final WorkloadRepository workloadRepository;

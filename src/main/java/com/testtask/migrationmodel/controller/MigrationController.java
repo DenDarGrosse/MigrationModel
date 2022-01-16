@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/migration")
+@RequestMapping("/api/migration")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class MigrationController {
     private final MigrationRepository migrationRepository;
