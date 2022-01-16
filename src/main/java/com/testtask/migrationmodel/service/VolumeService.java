@@ -8,25 +8,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class VolumeService {
     private final VolumeRepository volumeRepository;
 
-    public List<Volume> validate(List<Long> volumeIds){
+    public List<Volume> validate(List<Long> volumeIds) {
         var volumes = new LinkedList<Volume>();
 
         for (var id : volumeIds) {
-            var volumeOptional = volumeRepository.findById(id);
-
-            if (volumeOptional.isEmpty()) {
-                return null; //TODO: need to create error return
-            }
-
-            volumes.add(volumeOptional.get());
+            var volume = validate(id);
+            volumes.add(volume);
         }
 
         return volumes;
+    }
+
+    public Volume validate(Long id) {
+        var volumeData = volumeRepository.findById(id);
+
+        if (volumeData.isEmpty()) {
+            throw new NoSuchElementException("Can not find Volume with id " + id);
+        }
+
+        return volumeData.get();
     }
 }

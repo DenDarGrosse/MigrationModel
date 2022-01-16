@@ -1,4 +1,4 @@
-package com.testtask.migrationmodel.Config;
+package com.testtask.migrationmodel.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;

@@ -4,8 +4,10 @@ import com.testtask.migrationmodel.entity.Workload;
 import com.testtask.migrationmodel.repository.WorkloadRepository;
 import com.testtask.migrationmodel.service.CredentialsService;
 import com.testtask.migrationmodel.service.VolumeService;
+import com.testtask.migrationmodel.service.WorkloadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,31 +17,27 @@ public class WorkloadController {
     private final WorkloadRepository workloadRepository;
     private final VolumeService volumeService;
     private final CredentialsService credentialsService;
+    private final WorkloadService workloadService;
 
     @PostMapping
-    public void add(@RequestBody Workload workload) {
+    public ResponseEntity<Workload> add(@RequestBody Workload workload) {
         var lastId = workloadRepository.getLastId();
 
         if (lastId == null) {
             lastId = -1L;
         }
 
-        var volumes = volumeService.validate(workload.getVolumeIds());
-        if (volumes == null) {
-            return;
-        }
+        volumeService.validate(workload.getVolumeIds());
+        credentialsService.validate(workload.getCredentialsId());
 
-        var credentials = credentialsService.validate(workload.getCredentialsId());
-        if (credentials == null) {
-            return;
-        }
+        var _workload = new Workload(
+                lastId + 1,
+                workload.getIp(),
+                workload.getCredentialsId(),
+                workload.getVolumeIds());
+        workloadRepository.save(_workload);
 
-        var _workload = workloadRepository.save(
-                new Workload(
-                        lastId + 1,
-                        workload.getIp(),
-                        workload.getCredentialsId(),
-                        workload.getVolumeIds()));
+        return ResponseEntity.ok(_workload);
     }
 
     @DeleteMapping("/{id}")
@@ -48,20 +46,13 @@ public class WorkloadController {
     }
 
     @PutMapping("/{id}")
-    public void modify(@PathVariable Long id, @RequestBody Workload workload) {
+    public ResponseEntity<Workload> modify(@PathVariable Long id, @RequestBody Workload workload) {
         //TODO: need to not let change ip of source
-        var workloadData = workloadRepository.findById(id);
+        var _workload = workloadService.validate(id);
+        _workload.setCredentialsId(workload.getCredentialsId());
+        _workload.setVolumeIds(workload.getVolumeIds());
+        workloadRepository.save(_workload);
 
-        if (workloadData.isPresent()) {
-            var volumes = volumeService.validate(workload.getVolumeIds());
-            if (volumes == null) {
-                return;
-            }
-
-            var _workload = workloadData.get();
-            _workload.setCredentialsId(workload.getCredentialsId());
-            _workload.setVolumeIds(workload.getVolumeIds());
-            workloadRepository.save(_workload);
-        }
+        return ResponseEntity.ok(_workload);
     }
 }

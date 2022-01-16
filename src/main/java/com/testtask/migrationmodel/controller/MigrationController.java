@@ -8,6 +8,7 @@ import com.testtask.migrationmodel.service.TargetCloudService;
 import com.testtask.migrationmodel.service.WorkloadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,32 +21,26 @@ public class MigrationController {
     private final MigrationService migrationService;
 
     @PostMapping
-    public void add(@RequestBody Migration migration) {
+    public ResponseEntity<Migration> add(@RequestBody Migration migration) {
         var lastId = migrationRepository.getLastId();
 
         if (lastId == null) {
             lastId = -1L;
         }
 
-
-        var source = workloadService.validate(migration.getSourceId());
-        if (source == null) {
-            return; //TODO: need to create error return
-        }
-
-        var target = targetCloudService.validate(migration.getTargetCloudId());
-        if (target == null) {
-            return;
-        }
+        workloadService.validate(migration.getSourceId());
+        targetCloudService.validate(migration.getTargetCloudId());
 
         var _migration = new Migration(
                 lastId + 1,
                 migration.getMountPoints(),
-                source.getId(),
-                target.getId(),
+                migration.getSourceId(),
+                migration.getTargetCloudId(),
                 MigrationState.notStarted
         );
         migrationRepository.save(_migration);
+
+        return ResponseEntity.ok(_migration);
     }
 
     @DeleteMapping("/{id}")
@@ -54,52 +49,26 @@ public class MigrationController {
     }
 
     @PutMapping("/{id}")
-    public void modify(@PathVariable Long id, @RequestBody Migration migration) {
-        var migrationData = migrationRepository.findById(id);
-
-        if (migrationData.isEmpty()) {
-            return;
-        }
-
-        var source = workloadService.validate(migration.getSourceId());
-        if (source == null) {
-            return; //TODO: need to create error return
-        }
-
-        var target = targetCloudService.validate(migration.getTargetCloudId());
-        if (target == null) {
-            return;
-        }
-
-        var _migration = migrationData.get();
+    public ResponseEntity<Migration> modify(@PathVariable Long id, @RequestBody Migration migration) {
+        var _migration = migrationService.validate(id);
         _migration.setMigrationState(migration.getMigrationState());
-        _migration.setSourceId(source.getId());
+        _migration.setSourceId(migration.getSourceId());
         _migration.setMountPoints(migration.getMountPoints());
-        _migration.setTargetCloudId(target.getId());
+        _migration.setTargetCloudId(migration.getTargetCloudId());
         migrationRepository.save(_migration);
+
+        return ResponseEntity.ok(_migration);
     }
 
     @PutMapping("/run/{id}")
     public void run(@PathVariable Long id) {
-        var migrationData = migrationRepository.findById(id);
-
-        if (migrationData.isEmpty()) {
-            return;
-        }
-
-        var migration = migrationData.get();
+        var migration = migrationService.validate(id);
         migrationService.run(migration);
     }
 
     @GetMapping("status/{id}")
     public MigrationState status(@PathVariable Long id) {
-        var migrationData = migrationRepository.findById(id);
-
-        if (migrationData.isEmpty()) {
-            return null;
-        }
-
-        var migration = migrationData.get();
+        var migration = migrationService.validate(id);
         return migration.getMigrationState();
     }
 }

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CredentialsService {
@@ -13,8 +15,9 @@ public class CredentialsService {
 
     public Credentials validate(Long credentialId) {
         var credentialsData = credentialsRepository.findById(credentialId);
+
         if (credentialsData.isEmpty()) {
-            return null;
+            throw new NoSuchElementException("Can not find Credentials with id " + credentialId);
         }
 
         return credentialsData.get();

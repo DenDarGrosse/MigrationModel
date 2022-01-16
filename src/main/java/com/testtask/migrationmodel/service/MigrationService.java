@@ -8,9 +8,11 @@ import com.testtask.migrationmodel.repository.MigrationRepository;
 import com.testtask.migrationmodel.repository.TargetCloudRepository;
 import com.testtask.migrationmodel.repository.WorkloadRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,15 +24,26 @@ public class MigrationService {
     private final MigrationRepository migrationRepository;
     private final WorkloadRepository workloadRepository;
 
+    public Migration validate(Long migrationId){
+        var migrationData = migrationRepository.findById(migrationId);
+
+        if(migrationData.isEmpty()){
+            throw new NoSuchElementException("Can not find Migration with id " + migrationId);
+        }
+
+        return migrationData.get();
+    }
+
     public void setMigrationState(Migration migration, MigrationState migrationState) {
         migration.setMigrationState(migrationState);
         migrationRepository.save(migration);
     }
 
+    @SneakyThrows
     public void run(Migration migration) {
-        //TODO: сделать паузу на 5 минут
-
         setMigrationState(migration, MigrationState.running);
+
+        Thread.sleep(5*60*1000);
 
         var source = workloadService.validate(migration.getSourceId());
         var target = targetCloudService.validate(migration.getTargetCloudId());
