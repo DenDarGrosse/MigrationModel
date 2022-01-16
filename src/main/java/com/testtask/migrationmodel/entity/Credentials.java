@@ -12,7 +12,6 @@ import org.springframework.lang.NonNull;
 public class Credentials {
 
     @PrimaryKey
-    @NonNull
     private Long id;
     @NonNull
     private String username;
