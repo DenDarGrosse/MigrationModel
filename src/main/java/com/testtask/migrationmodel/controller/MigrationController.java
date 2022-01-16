@@ -30,7 +30,7 @@ public class MigrationController {
         targetCloudService.validate(migration.getTargetCloudId());
 
         var _migration = new Migration(
-                lastId + 1,
+                lastId,
                 migration.getMountPoints(),
                 migration.getSourceId(),
                 migration.getTargetCloudId(),

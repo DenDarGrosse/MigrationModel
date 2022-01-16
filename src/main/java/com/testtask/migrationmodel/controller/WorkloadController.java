@@ -29,7 +29,7 @@ public class WorkloadController {
         credentialsService.validate(workload.getCredentialsId());
 
         var _workload = new Workload(
-                lastId + 1,
+                lastId,
                 workload.getIp(),
                 workload.getCredentialsId(),
                 workload.getVolumeIds());

@@ -21,7 +21,7 @@ public class VolumeController {
     public ResponseEntity<Volume> save(@RequestBody Volume volume) {
         var lastId = idUtil.getNextId(volumeRepository);
 
-        var _volume = new Volume(lastId + 1, volume.getMountPoint(), volume.getSize());
+        var _volume = new Volume(lastId, volume.getMountPoint(), volume.getSize());
         volumeRepository.save(_volume);
 
         return ResponseEntity.ok(_volume);

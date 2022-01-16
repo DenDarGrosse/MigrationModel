@@ -47,6 +47,7 @@ public class MigrationService {
 
         var source = workloadService.validate(migration.getSourceId());
         var target = targetCloudService.validate(migration.getTargetCloudId());
+        var targetWorkload = workloadService.validate(target.getTargetId());
         var selectedVolumes = migration.getMountPoints();
         var sourceVolumes = volumeService.validate(source.getVolumeIds());
         var volumesToCopy = sourceVolumes.stream()
@@ -54,7 +55,7 @@ public class MigrationService {
                 .map(Volume::getId)
                 .collect(Collectors.toList());
 
-        var newWorkload = new Workload(source.getId(), source.getIp(), source.getCredentialsId(), volumesToCopy);
+        var newWorkload = new Workload(target.getTargetId(), targetWorkload.getIp(), targetWorkload.getCredentialsId(), volumesToCopy);
         workloadRepository.save(newWorkload);
 
         setMigrationState(migration, MigrationState.success);

@@ -12,6 +12,6 @@ public class IdUtil {
             lastId = -1L;
         }
 
-        return lastId;
+        return lastId + 1;
     }
 }

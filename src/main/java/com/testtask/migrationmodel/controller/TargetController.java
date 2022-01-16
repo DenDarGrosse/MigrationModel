@@ -26,7 +26,7 @@ public class TargetController {
         workloadService.validate(targetCloud.getTargetId());
 
         var _targetCloud = new TargetCloud(
-                lastId + 1,
+                lastId,
                 targetCloud.getCloudType(),
                 targetCloud.getCloudCredentialsId(),
                 targetCloud.getTargetId()
